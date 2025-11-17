@@ -38,6 +38,27 @@ button.addEventListener('click', function () {
 
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
+    const cell =
+      mutation.target.nodeType === Node.TEXT_NODE
+        ? mutation.target.parentElement
+        : mutation.target;
+
+    if (cell && cell.tagName === 'TD') {
+      const newText = cell.textContent.trim();
+
+      if (newText !== '') {
+        cell.classList.add('cell-animate');
+
+        cell.addEventListener(
+          'animationend',
+          () => {
+            cell.classList.remove('cell-animate');
+          },
+          { once: true },
+        );
+      }
+    }
+
     if (mutation.target.textContent === '2048') {
       game.statusGame = `win`;
 
