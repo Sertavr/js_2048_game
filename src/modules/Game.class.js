@@ -28,7 +28,6 @@ class Game {
   ];
   score = 0;
   status = 'idle';
-  isAlowedStep = ['', '', '', ''];
   constructor(scoreContainer, container, currentState = this.initialState) {
     this.currentState = JSON.parse(JSON.stringify(currentState));
     this.tBodyEl = container.querySelector('tbody');
@@ -46,11 +45,10 @@ class Game {
         return;
       }
 
-      if (
-        this.isAlowedStep.length === 4 &&
-        this.isAlowedStep.every((el) => el === false)
-      ) {
+      if (this.checkLose()) {
         this.youLose();
+
+        return;
       }
 
       const copyState = JSON.parse(JSON.stringify(this.currentState));
@@ -90,11 +88,7 @@ class Game {
         copyState[ind] = alignLeft;
       });
 
-      this.isAlowedStep[0] = isDifferent;
-
       if (isDifferent) {
-        this.isAlowedStep = ['', '', '', ''];
-
         const cellCoordOne = this.getRandomCell(copyState);
         const [rowOne, columnOne] = cellCoordOne;
 
@@ -115,11 +109,10 @@ class Game {
         return;
       }
 
-      if (
-        this.isAlowedStep.length === 4 &&
-        this.isAlowedStep.every((el) => el === false)
-      ) {
+      if (this.checkLose()) {
         this.youLose();
+
+        return;
       }
 
       const copyState = JSON.parse(JSON.stringify(this.currentState));
@@ -159,11 +152,7 @@ class Game {
         copyState[ind] = alignLeft;
       });
 
-      this.isAlowedStep[1] = isDifferent;
-
       if (isDifferent) {
-        this.isAlowedStep = ['', '', '', ''];
-
         const cellCoordOne = this.getRandomCell(copyState);
         const [rowOne, columnOne] = cellCoordOne;
 
@@ -184,11 +173,10 @@ class Game {
         return;
       }
 
-      if (
-        this.isAlowedStep.length === 4 &&
-        this.isAlowedStep.every((el) => el === false)
-      ) {
+      if (this.checkLose()) {
         this.youLose();
+
+        return;
       }
 
       const copyState = JSON.parse(JSON.stringify(this.currentState));
@@ -216,11 +204,7 @@ class Game {
         }
       }
 
-      this.isAlowedStep[2] = isDifferent;
-
       if (isDifferent) {
-        this.isAlowedStep = ['', '', '', ''];
-
         const cellCoordOne = this.getRandomCell(copyState);
         const [rowOne, columnOne] = cellCoordOne;
 
@@ -241,11 +225,10 @@ class Game {
         return;
       }
 
-      if (
-        this.isAlowedStep.length === 4 &&
-        this.isAlowedStep.every((el) => el === false)
-      ) {
+      if (this.checkLose()) {
         this.youLose();
+
+        return;
       }
 
       const copyState = JSON.parse(JSON.stringify(this.currentState));
@@ -273,11 +256,7 @@ class Game {
         }
       }
 
-      this.isAlowedStep[3] = isDifferent;
-
       if (isDifferent) {
-        this.isAlowedStep = ['', '', '', ''];
-
         const cellCoordOne = this.getRandomCell(copyState);
         const [rowOne, columnOne] = cellCoordOne;
 
@@ -408,6 +387,7 @@ class Game {
   restart() {
     this.currentState = this.initialState;
     this.updateTable();
+    this.score = 0;
   }
 
   getRandomNumber() {
@@ -465,6 +445,47 @@ class Game {
         }
       }
     }
+  }
+
+  checkLose() {
+    const copyState = JSON.parse(JSON.stringify(this.currentState));
+
+    function horizontal() {
+      for (let i = 0; i < copyState.length; i++) {
+        if (copyState[i].includes('')) {
+          return false;
+        }
+
+        for (let j = 0; j < copyState.length - 1; j++) {
+          if (copyState[i][j] === copyState[i][j + 1]) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    if (!horizontal()) {
+      return false;
+    }
+
+    for (let i = 0; i < copyState.length; i++) {
+      const arr = [
+        copyState[0][i],
+        copyState[1][i],
+        copyState[2][i],
+        copyState[3][i],
+      ];
+
+      for (let j = 0; j < arr.length - 1; j++) {
+        if (arr[j] === arr[j + 1]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   youLose() {
